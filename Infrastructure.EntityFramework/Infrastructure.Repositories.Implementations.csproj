@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Entities\Entities.csproj" />
+    <ProjectReference Include="..\Infrastructure.Repositories.Implementations\Infrastructure.EntityFramework.csproj" />
+    <ProjectReference Include="..\Services.Repositories.Abstractions\Services.Repositories.Abstractions.csproj" />
+  </ItemGroup>
+
+
+
+  
+
+</Project>
