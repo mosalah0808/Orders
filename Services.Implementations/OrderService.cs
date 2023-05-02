@@ -4,6 +4,7 @@ using Services.Abstraction;
 using Services.Contracts;
 using Services.Repositories.Abstractions;
 
+
 namespace Services.Implementations
 {
     public class OrderService : IOrderService
@@ -21,20 +22,19 @@ namespace Services.Implementations
             _mapper = mapper;
         }
 
-        public async Task<Order> Create(OrderDTOCreate orderDto)
+        public async Task<OrderDTO> Create(OrderDTO orderDto)
         {
-            var entity = _mapper.Map<OrderDTOCreate, Order>(orderDto);
-            entity.Created = DateTimeOffset.Now.ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss");
+            var entity = _mapper.Map<OrderDTO, Order>(orderDto);
+            entity.Created = DateTime.UtcNow;
             entity.Status = statuses[0];
             var res = await _orderRepository.AddAsync(entity);
             _orderRepository.SaveChanges();
-            return res;
+            return _mapper.Map<Order,OrderDTO>(res); 
         }
 
         public void Delete(Guid id)
         {
-            
-            _orderRepository.DeleteById(id);
+             _orderRepository.DeleteById(id);
              _orderRepository.SaveChanges();
         }
 
@@ -44,12 +44,11 @@ namespace Services.Implementations
             return _mapper.Map<OrderDTO>(order);
         }
 
-        public async Task<Order>  Update(Guid id, OrderDTOUpdate orderDto)
+        public async Task<OrderDTO>  Update(Guid id, OrderDTOUpdate orderDto)
         {
             var order = await _orderRepository.GetById(id);
-
             order.Status = orderDto.Status;
-           // order.Lines = orderDto.Lines;
+           
             foreach (var lineItemDto in orderDto.Lines)
             {
                 var lineItem = order.Lines.FirstOrDefault(l => l.Id == lineItemDto.Id);
@@ -59,14 +58,13 @@ namespace Services.Implementations
                     return null;
                 }
 
-                // Update the properties of the LineItem object with the new values
                 lineItem.Id = lineItemDto.Id;
                 lineItem.Qty = lineItemDto.Qty;
             }
 
             _orderRepository.Update(order);
              _orderRepository.SaveChanges();
-            return order;
+            return _mapper.Map<Order, OrderDTO>(order);
         }
     }
 }

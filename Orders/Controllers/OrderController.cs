@@ -22,44 +22,18 @@ namespace Orders.Controllers
             _mapper = mapper;
         }
 
-        private static readonly string[] statuses = new[]
+       [HttpPost("")]
+        public async Task<IActionResult> Create(OrderDTOCreate orderCreateDTO)
         {
-             "New", "Awaiting Payment", "Paid", "In Transit", "Delivered", "Completed"
-        };
+            var order = await _order.GetById(orderCreateDTO.Id);
 
-        [HttpPost("")]
-        public async Task<IActionResult> Create(OrderDTOCreate orderDTO)
-        {
-
-            if (orderDTO.Lines == null || orderDTO.Lines.Count == 0)
+            if (order != null)
             {
-                return BadRequest("Order must contain at least one line");
+                return BadRequest("Id уже существует!");
             }
+            OrderDTO orderDto = _mapper.Map<OrderDTO>(orderCreateDTO);
 
-            foreach (var line in orderDTO.Lines)
-            {
-                if (line.Qty <= 0)
-                {
-                    return BadRequest("Line quantity must be greater than 0.");
-                }
-            }
-                      
-
-            List<LineItemDTO> lines = new List<LineItemDTO>();
-
-
-            foreach (var item in orderDTO.Lines)
-            {
-                
-                LineItemDTO newitem = new LineItemDTO();
-                newitem.Id = item.Id;
-                newitem.Qty = item.Qty;
-
-                lines.Add(newitem);
-            }
-            orderDTO.Lines = lines;
-
-            return Ok(await _order.Create(_mapper.Map<OrderDTOCreate>(orderDTO)));
+            return Ok((await _order.Create(orderDto)));
 
         }
 
@@ -76,35 +50,21 @@ namespace Orders.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(Guid id, OrderDTOUpdate orderDTO)
+        public async Task<IActionResult> Update(Guid id, OrderDTOUpdate orderDTOUpdate)
         {
-
-            if (orderDTO.Lines == null || orderDTO.Lines.Count == 0)
-            {
-                return BadRequest("Order must contain at least one line");
-            }
-
-            foreach (var line in orderDTO.Lines)
-            {
-                if (line.Qty <= 0)
-                {
-                    return BadRequest("Line quantity must be greater than 0.");
-                }
-            }
-
             var order = await _order.GetById(id);
 
             if (order == null)
             {
                 return NotFound();
             }
-            
+
             if (order.Status == "Paid" || order.Status == "In Transit" || order.Status == "Delivered" || order.Status == "Completed")
             {
                 return BadRequest("заказы в статусах “оплачен”, “передан в доставку”, “доставлен”, “завершен” нельзя редактировать");
             }
 
-            return Ok(await _order.Update(order.Id, orderDTO));
+            return Ok(await _order.Update(order.Id, orderDTOUpdate));
         }
 
         [HttpDelete("{id}")]

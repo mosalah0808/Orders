@@ -7,9 +7,9 @@ namespace Services.Abstraction
     {
         Task<OrderDTO> GetById(Guid id);
 
-        Task<Order> Create(OrderDTOCreate orderDto);
+        Task<OrderDTO> Create(OrderDTO orderDto);
 
-        Task<Order> Update(Guid id, OrderDTOUpdate orderDto);
+        Task<OrderDTO> Update(Guid id, OrderDTOUpdate orderDto);
 
         void Delete(Guid id);
     }

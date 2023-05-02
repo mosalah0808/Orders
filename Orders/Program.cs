@@ -18,9 +18,9 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<DatabaseContext>(options =>
                            options.UseNpgsql(new NpgsqlConnection(builder.Configuration.GetConnectionString("OrdersString"))));
 
-builder.Services.AddTransient<IOrderRepository, OrderRepository>();
+builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 
-builder.Services.AddTransient<IOrderService, OrderService>();
+builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddAutoMapper(typeof(OrderMapping));
 
 var app = builder.Build();

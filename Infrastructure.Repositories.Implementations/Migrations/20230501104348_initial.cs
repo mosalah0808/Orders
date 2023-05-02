@@ -17,7 +17,7 @@ namespace Infrastructure.EntityFramework.Migrations
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Status = table.Column<string>(type: "text", nullable: false),
-                    Created = table.Column<string>(type: "text", nullable: false)
+                    Created = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -25,18 +25,18 @@ namespace Infrastructure.EntityFramework.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "LineItem",
+                name: "LineItems",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Qty = table.Column<int>(type: "integer", nullable: false),
-                    OrderId = table.Column<Guid>(type: "uuid", nullable: false)
+                    OrderId = table.Column<Guid>(type: "uuid", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_LineItem", x => x.Id);
+                    table.PrimaryKey("PK_LineItems", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_LineItem_Orders_OrderId",
+                        name: "FK_LineItems_Orders_OrderId",
                         column: x => x.OrderId,
                         principalTable: "Orders",
                         principalColumn: "Id",
@@ -44,8 +44,8 @@ namespace Infrastructure.EntityFramework.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_LineItem_OrderId",
-                table: "LineItem",
+                name: "IX_LineItems_OrderId",
+                table: "LineItems",
                 column: "OrderId");
         }
 
@@ -53,7 +53,7 @@ namespace Infrastructure.EntityFramework.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "LineItem");
+                name: "LineItems");
 
             migrationBuilder.DropTable(
                 name: "Orders");

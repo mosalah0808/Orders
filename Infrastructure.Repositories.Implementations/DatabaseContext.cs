@@ -10,14 +10,14 @@ namespace Infrastructure.EntityFramework
 
         }
         public DbSet<Order> Orders { get; set; }
-        
+        public DbSet<LineItem> LineItems { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             this.ApplyNewMigrations();
-            modelBuilder.Entity<Order>()
-                .HasMany(o => o.Lines)
-                .WithOne(l => l.Order)
-                .HasForeignKey(l => l.OrderId)
+            modelBuilder.Entity<LineItem>()
+                .HasOne<Order>()
+                .WithMany(l => l.Lines)
                 .OnDelete(DeleteBehavior.Cascade);
         }
 
@@ -32,7 +32,7 @@ namespace Infrastructure.EntityFramework
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Exception while migration.",ex);
+                Console.WriteLine("Ошибка при миграции",ex);
             }
         }
 

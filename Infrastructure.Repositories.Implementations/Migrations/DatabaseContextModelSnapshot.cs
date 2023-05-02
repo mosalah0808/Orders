@@ -28,7 +28,7 @@ namespace Infrastructure.EntityFramework.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("OrderId")
+                    b.Property<Guid?>("OrderId")
                         .HasColumnType("uuid");
 
                     b.Property<int>("Qty")
@@ -38,7 +38,7 @@ namespace Infrastructure.EntityFramework.Migrations
 
                     b.HasIndex("OrderId");
 
-                    b.ToTable("LineItem");
+                    b.ToTable("LineItems");
                 });
 
             modelBuilder.Entity("Entities.Order", b =>
@@ -47,9 +47,8 @@ namespace Infrastructure.EntityFramework.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<string>("Created")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Status")
                         .IsRequired()
@@ -62,13 +61,10 @@ namespace Infrastructure.EntityFramework.Migrations
 
             modelBuilder.Entity("Entities.LineItem", b =>
                 {
-                    b.HasOne("Entities.Order", "Order")
+                    b.HasOne("Entities.Order", null)
                         .WithMany("Lines")
                         .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Order");
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("Entities.Order", b =>
